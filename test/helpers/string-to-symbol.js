@@ -1,7 +1,7 @@
 function stringToSymbol(arb) {
   return arb.smap(
     str => Symbol(str),
-    symbol => symbol.toString(),
+    symbol => symbol.toString()
   );
 }
 
