@@ -24,6 +24,12 @@ describe("x.should.emit", function() {
     emitter.emit("test", true);
   });
 
+  it("should handle symbols as events", function(done) {
+    const event = Symbol('test');
+    emitter.should.emit(event).then(done);
+    emitter.emit(event, true);
+  });
+
   it("should fail if the event isn't sent", function() {
     (function() {
       emitter.should.emit("test");
