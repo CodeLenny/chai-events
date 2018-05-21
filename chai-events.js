@@ -47,55 +47,77 @@ function plugin(chai, utils) {
   Assertion.addProperty("emitter", isEmitter);
   Assertion.addProperty("target", isEmitter);
 
-  Assertion.addMethod("emit", function(name, args) {
-    new Assertion(this._obj).to.be.an.emitter;
+  function assertEmitter(obj) {
+    new Assertion(obj).to.be.an.emitter;
+  }
 
+  function assertEventEmit(_this) {
+    var name = utils.flag(_this, "emit.event");
     new Assertion(name).to.satisfy(function(_name) {
         return typeof _name === 'string' || typeof _name === 'symbol';
     });
 
-    var obj = this._obj;
-    var _this = this;
+    var obj = _this._obj;
     var assert = function() {
       _this.assert.apply(_this, arguments);
     }
-    var timeout = utils.flag(this, 'timeout') || 1500;
+    var timeout = utils.flag(_this, 'timeout') || 1500;
 
-    if(utils.flag(this, 'negate')) {
-      // Ensure that the event doesn't fire before timeout
-      return new Promise(function(resolve, reject) {
-        var done = false;
-        obj.on(name, function() {
-          if(done) { return; }
-          done = true;
-          assert(false, "expected #{this} to not emit "+name.toString()+".");
+    return new Promise(function(resolve, reject) {
+      var complete = false;
+      obj.on(name, function() {
+        if(complete) { return; }
+        complete = true;
+        if(utils.flag(_this, "negate")) {
+          assert(false, "expected #{this} to not emit " + name.toString() + ".");
+          reject(new Error("Emitter wasn't supposed to emit '" + name.toString() + "'."));
+        }
+        else {
           resolve();
-        });
-        setTimeout(function() {
-          if(done) { return; }
-          done = true;
-          resolve();
-        }, timeout);
+        }
       });
-    }
-    else {
-      // Ensure that the event fires
-      return new Promise(function(resolve, reject) {
-        var done = false;
-        obj.on(name, function() {
-          if(done) { return; }
-          done = true;
+      setTimeout(function() {
+        if(complete) { return; }
+        complete = true;
+        if(!utils.flag(_this, "negate")) {
+          assert(false, "expected #{this} to emit " + name.toString() + ".");
+          reject(new Error("Emitter was supposed to emit '" + name.toString() + "'."));
+        }
+        else {
           resolve();
-        });
-        setTimeout(function() {
-          if(done) { return; }
-          done = true;
-          assert(false, "expected #{this} to emit "+name.toString()+".");
-          resolve();
-        }, timeout);
-      });
-    }
+        }
+      }, timeout);
+    });
+  }
+
+  Assertion.addChainableMethod("emit", function(name) {
+    new Assertion(this._obj).to.be.an.emitter;
+    utils.flag(this, "emit", true);
+    utils.flag(this, "emit.event", name);
   });
+
+  Assertion.addProperty("promise", function() {
+    if(!utils.flag(this, "emit")) {
+      this.assert(false, "expected '.emit' before '.promise'");
+    }
+    return assertEventEmit(this);
+  });
+
+  function passThroughPromise(method) {
+    Assertion.addMethod(method, function() {
+      if(!utils.flag(this, "emit")) {
+        if(typeof this._obj[method] === "function") {
+          return this._obj[method].apply(this._obj, arguments);
+        }
+        this.assert(false, "expected '.emit' before '." + method + "'");
+      }
+      var promise = assertEventEmit(this);
+      return promise[method].apply(promise, arguments);
+    });
+  }
+
+  passThroughPromise("then");
+  passThroughPromise("catch");
 
 }
 

@@ -1,10 +1,17 @@
 "use strict";
 const chai = require("chai");
-const should = chai.should();
+var chaiAsPromised = require("chai-as-promised");
 
 chai.use(require("../chai-events"));
+chai.use(chaiAsPromised);
+
+const should = chai.should();
 
 const EventEmitter = require("events");
+
+function noop() {
+  return true;
+}
 
 describe("x.should.emit", function() {
 
@@ -16,7 +23,7 @@ describe("x.should.emit", function() {
   it("should fail if given non-event-emitters", function() {
     (function() {
       ({x: 1}).should.emit("test");
-    }).should.fail;
+    }).should.throw();
   });
 
   it("should listen for immediately emitted events", function(done) {
@@ -32,22 +39,19 @@ describe("x.should.emit", function() {
 
   it("should fail if the event isn't sent", function() {
     (function() {
-      emitter.should.emit("test");
-    }).should.fail;
+      emitter.should.emit(test).promise;
+    }).should.throw();
   });
 
   it("should handle events that should not fire", function(done) {
     emitter.should.not.emit("test").then(done);
   });
 
-  it("should fail if given a fired event", function(done) {
-    (function() {
-      emitter.should.not.emit("test");
-    }).should.fail;
+  it("should fail if given a fired event", function() {
     setTimeout(function() {
       emitter.emit("test");
-      done()
     }, 200);
+    emitter.should.not.emit("test").should.be.rejected;
   });
 
 });
