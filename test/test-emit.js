@@ -66,16 +66,6 @@ describe("x.should", function() {
       );
     });
 
-    /*jsc.property(
-      "confirms events don't fire",
-      anyEmitter, arbitraryEventName,
-      (emitter, eventName) => {
-        const p = emitter().should.not.emit(eventName);
-        p.then(() => console.log("Hi"));
-        return p.then(() => true);
-      },
-    );*/
-
     describe("fails if the event fires", function() {
       let run = 0;
       jsc.assertForall(
@@ -96,25 +86,6 @@ describe("x.should", function() {
         },
       );
     });
-
-    /*
-    jsc.property(
-      "fails if the event fires",
-      anyEmitter, arbitraryEventName, arbitraryEventData,
-      (emitter, eventName, eventData) => {
-        emitter = emitter();
-        (function() {
-          emitter.should.not.emit("test");
-        }).should.fail;
-        return new Promise(resolve => {
-          setTimeout(function() {
-            emitter.emit("test");
-            resolve(true);
-          }, 200);
-        });
-      }
-    );
-    */
 
   });
 
