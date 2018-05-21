@@ -46,7 +46,7 @@ describe("x.should", function() {
           check(emitter())(eventName);
         }).should.fail;
         return true;
-      },
+      }
     );
 
   });
@@ -62,7 +62,7 @@ describe("x.should", function() {
             return emitter().should.not.emit(eventName);
           });
           return true;
-        },
+        }
       );
     });
 
@@ -83,7 +83,7 @@ describe("x.should", function() {
               .then(() => delay(25));
           });
           return true;
-        },
+        }
       );
     });
 
@@ -99,7 +99,7 @@ describe("x.should", function() {
         const p = emitter.should.emit(eventName);
         emitter.emit(eventName, eventData);
         return p.then(() => true);
-      },
+      }
     );
 
     jsc.property(
@@ -110,7 +110,7 @@ describe("x.should", function() {
           emitter().should.emit(eventName);
         }).should.fail;
         return true;
-      },
+      }
     );
 
   });
