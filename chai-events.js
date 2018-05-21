@@ -68,7 +68,7 @@ function plugin(chai, utils) {
         obj.on(name, function() {
           if(done) { return; }
           done = true;
-          assert(false, "expected #{this} to not emit "+name+".");
+          assert(false, "expected #{this} to not emit "+name.toString()+".");
           resolve();
         });
         setTimeout(function() {
@@ -90,7 +90,7 @@ function plugin(chai, utils) {
         setTimeout(function() {
           if(done) { return; }
           done = true;
-          assert(false, "expected #{this} to emit "+name+".");
+          assert(false, "expected #{this} to emit "+name.toString()+".");
           resolve();
         }, timeout);
       });
