@@ -50,7 +50,10 @@ function plugin(chai, utils) {
   Assertion.addMethod("emit", function(name, args) {
     new Assertion(this._obj).to.be.an.emitter;
 
-    new Assertion(name).to.be.a("string");
+    new Assertion(name).to.satisfy(function(_name) {
+        return typeof _name === 'string' || typeof _name === 'symbol';
+    });
+
     var obj = this._obj;
     var _this = this;
     var assert = function() {
@@ -65,7 +68,7 @@ function plugin(chai, utils) {
         obj.on(name, function() {
           if(done) { return; }
           done = true;
-          assert(false, "expected #{this} to not emit "+name+".");
+          assert(false, "expected #{this} to not emit "+name.toString()+".");
           resolve();
         });
         setTimeout(function() {
@@ -87,7 +90,7 @@ function plugin(chai, utils) {
         setTimeout(function() {
           if(done) { return; }
           done = true;
-          assert(false, "expected #{this} to emit "+name+".");
+          assert(false, "expected #{this} to emit "+name.toString()+".");
           resolve();
         }, timeout);
       });
