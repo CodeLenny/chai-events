@@ -1,10 +1,12 @@
 ## Unreleased
 
-## Added
+## [0.0.2] - 2018-11-20
+
+### Added
 
 - Support for symbols as event names (thanks to @rijnhard, see https://github.com/CodeLenny/chai-events/pull/6)
 
-## Modified
+### Modified
 
 - Rewrote tests to use JSVerify, improved test coverage.
 
