@@ -1,5 +1,16 @@
 ## Unreleased
 
+Bugfixes and custom timeouts.
+
+### Added
+
+- Implemented assertion argument to support custom timeouts (#13)
+
+### Modified
+
+- Fixed an `UnhandledPromiseRejectionWarning` (Reported in #11, fixed in #12)
+- Fixed `.should.not.emit` (Reported in #10, fixed in #13)
+
 ## [0.0.2] - 2018-11-20
 
 ### Added
