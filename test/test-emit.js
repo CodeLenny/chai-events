@@ -57,7 +57,7 @@ describe("x.should", function() {
         anyEmitter, arbitraryEventName,
         (emitter, eventName) => {
           it(`run ${++run}`, function() {
-            return emitter().should.not.emit(eventName);
+            return emitter().should.not.emit(eventName, { timeout: 50 });
           });
           return true;
         }
@@ -85,7 +85,7 @@ describe("x.should", function() {
 
     it("returns a resolving promise if the event isn't emitted", function() {
       const emitter = nodeEmitter();
-      const check = emitter.should.emit("eventA");
+      const check = emitter.should.emit("eventA", { timeout: 50 });
       check.should.be.a("promise");
       return check
         .then(() => should.fail("Check should have failed."))
@@ -140,7 +140,7 @@ describe("x.should", function() {
 
     it("returns a rejecting promise if event not emitted", function() {
       const emitter = nodeEmitter();
-      const check = emitter.should.emit("eventA");
+      const check = emitter.should.emit("eventA", { timeout: 50 });
       check.should.be.a("promise");
       return check
         .then(() => should.fail("Check should have failed."))

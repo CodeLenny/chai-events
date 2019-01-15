@@ -48,61 +48,52 @@ function plugin(chai, utils) {
   Assertion.addProperty("target", isEmitter);
 
   Assertion.addMethod("emit", function(name, args) {
+    const timeout = typeof args === "object" && typeof args.timeout === "number" ? args.timeout : 1500;
+    const obj = utils.flag(this, "object");
+
     new Assertion(this._obj).to.be.an.emitter;
 
     new Assertion(name).to.satisfy(function(_name) {
         return typeof _name === 'string' || typeof _name === 'symbol';
     });
 
-    var obj = this._obj;
-    var _this = this;
-    var assert = function() {
-      _this.assert.apply(_this, arguments);
-    }
-    var timeout = utils.flag(this, 'timeout') || 1500;
+    const assertEmission = expr => this.assert(
+      expr,
+      `expected #{this} to emit message with key '${name.toString()}'`,
+      `expected #{this} to not emit message with key '${name.toString()}'`,
+    );
 
-    if(utils.flag(this, 'negate')) {
-      // Ensure that the event doesn't fire before timeout
-      return new Promise(function(resolve, reject) {
-        var done = false;
-        obj.on(name, function() {
-          if(done) { return; }
-          done = true;
-          try {
-            assert(true, '', "expected #{this} to not emit "+name.toString()+".");
-            resolve();
-          } catch (err) {
-            reject(err);
-          }
-        });
-        setTimeout(function() {
-          if(done) { return; }
-          done = true;
-          resolve();
-        }, timeout);
+    return new Promise((resolve, reject) => {
+      let done = false;
+
+      obj.once(name, (...args) => {
+        if(done) {
+          return;
+        }
+        done = true;
+
+        try {
+          assertEmission(true); // Will throw error if action is unexpected.
+          resolve(args);
+        } catch (err) {
+          reject(err);
+        }
       });
-    }
-    else {
-      // Ensure that the event fires
-      return new Promise(function(resolve, reject) {
-        var done = false;
-        obj.on(name, function() {
-          if(done) { return; }
-          done = true;
+
+      setTimeout(() => {
+        if(done) {
+          return;
+        }
+        done = true;
+
+        try {
+          assertEmission(false); // Will throw error if action is unexpected.
           resolve();
-        });
-        setTimeout(function() {
-          if(done) { return; }
-          done = true;
-          try {
-            assert(false, '', "expected #{this} to emit "+name.toString()+".");
-            resolve();
-          } catch (err) {
-            reject(err);
-          }
-        }, timeout);
-      });
-    }
+        } catch (err) {
+          reject(err);
+        }
+      }, timeout);
+    });
   });
 
 }
