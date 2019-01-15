@@ -87,6 +87,16 @@ describe("x.should", function() {
       );
     });
 
+    it("returns a rejecting promise if the event is emitted", function() {
+      const emitter = nodeEmitter();
+      const check = emitter.should.emit("eventA");
+      check.should.be.a("promise");
+      emitter.emit("eventA");
+      return check
+        .then(() => should.fail("Check should have failed."))
+        .catch(err => true);
+    });
+
   });
 
   describe(".emit", function() {
@@ -112,6 +122,23 @@ describe("x.should", function() {
         return true;
       }
     );
+
+    it("returns a resolving promise if event emitted", function() {
+      const emitter = nodeEmitter();
+      const check = emitter.should.emit("eventA");
+      check.should.be.a("promise");
+      emitter.emit("eventA");
+      return check;
+    });
+
+    it("returns a rejecting promise if event not emitted", function() {
+      const emitter = nodeEmitter();
+      const check = emitter.should.emit("eventA");
+      check.should.be.a("promise");
+      return check
+        .then(() => should.fail("Check should have failed."))
+        .catch(err => true);
+    });
 
   });
 

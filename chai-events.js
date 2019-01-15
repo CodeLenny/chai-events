@@ -68,8 +68,12 @@ function plugin(chai, utils) {
         obj.on(name, function() {
           if(done) { return; }
           done = true;
-          assert(false, "expected #{this} to not emit "+name.toString()+".");
-          resolve();
+          try {
+            assert(false, "expected #{this} to not emit "+name.toString()+".");
+            resolve();
+          } catch (err) {
+            reject(err);
+          }
         });
         setTimeout(function() {
           if(done) { return; }
@@ -90,8 +94,12 @@ function plugin(chai, utils) {
         setTimeout(function() {
           if(done) { return; }
           done = true;
-          assert(false, "expected #{this} to emit "+name.toString()+".");
-          resolve();
+          try {
+            assert(false, "expected #{this} to emit "+name.toString()+".");
+            resolve();
+          } catch (err) {
+            reject(err);
+          }
         }, timeout);
       });
     }
