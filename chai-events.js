@@ -60,7 +60,7 @@ function plugin(chai, utils) {
     const assertEmission = expr => this.assert(
       expr,
       `expected #{this} to emit message with key '${name.toString()}'`,
-      `expected #{this} to not emit message with key '${name.toString()}'`,
+      `expected #{this} to not emit message with key '${name.toString()}'`
     );
 
     return new Promise((resolve, reject) => {
