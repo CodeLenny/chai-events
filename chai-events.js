@@ -69,7 +69,7 @@ function plugin(chai, utils) {
           if(done) { return; }
           done = true;
           try {
-            assert(false, "expected #{this} to not emit "+name.toString()+".");
+            assert(true, '', "expected #{this} to not emit "+name.toString()+".");
             resolve();
           } catch (err) {
             reject(err);
@@ -95,7 +95,7 @@ function plugin(chai, utils) {
           if(done) { return; }
           done = true;
           try {
-            assert(false, "expected #{this} to emit "+name.toString()+".");
+            assert(false, '', "expected #{this} to emit "+name.toString()+".");
             resolve();
           } catch (err) {
             reject(err);

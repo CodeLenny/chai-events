@@ -36,22 +36,20 @@ const arbitraryEventData = jsc.oneof([
 
 describe("x.should", function() {
 
-  describe("(all functions)", function() {
+  describe(".not.emit", function() {
 
     jsc.property(
       "fails if given a non-event-emitter",
-      nonEventEmitter, anyCheck, arbitraryEventName,
-      (emitter, check, eventName) => {
-        (function() {
-          check(emitter())(eventName);
-        }).should.fail;
-        return true;
+      nonEventEmitter, arbitraryEventName,
+      (emitter, eventName) => {
+        try {
+          emitter.should.not.emit(eventName);
+          return false;
+        } catch (err) {
+          return true;
+        }
       }
     );
-
-  });
-
-  describe(".not.emit", function() {
 
     describe("confirms events don't fire", function() {
       let run = 0;
@@ -66,25 +64,32 @@ describe("x.should", function() {
       );
     });
 
-    describe("fails if the event fires", function() {
-      let run = 0;
-      jsc.assertForall(
-        anyEmitter, arbitraryEventName, arbitraryEventData,
-        (emitter, eventName, eventData) => {
-          it(`run ${++run}`, function() {
-            emitter = emitter();
-            // Make sure to catch "error" events - they cause "uncaught error":
-            emitter.on("error", () => true);
-            (function() {
-              emitter.should.not.emit(eventName);
-            }).should.fail;
-            return delay(5)
-              .then(() => emitter.emit(eventName, eventData))
-              .then(() => delay(25));
-          });
-          return true;
-        }
-      );
+    jsc.property(
+      "fails if event is sent",
+      anyEmitter, arbitraryEventName,
+      (emitter, eventName) => {
+        const eventEmitter = emitter();
+        const check = eventEmitter.should.not.emit(eventName);
+        eventEmitter.emit(eventName);
+        return check
+          .then(() => should.fail("Check failed"))
+          .catch(err => true);
+        return (function() {
+          const check = eventEmitter.should.not.emit(eventName);
+          eventEmitter.emit(eventName);
+          return check;
+        }).should.throw();
+        return true;
+      }
+    );
+
+    it("returns a resolving promise if the event isn't emitted", function() {
+      const emitter = nodeEmitter();
+      const check = emitter.should.emit("eventA");
+      check.should.be.a("promise");
+      return check
+        .then(() => should.fail("Check should have failed."))
+        .catch(err => true);
     });
 
     it("returns a rejecting promise if the event is emitted", function() {
@@ -102,6 +107,19 @@ describe("x.should", function() {
   describe(".emit", function() {
 
     jsc.property(
+      "fails if given a non-event-emitter",
+      nonEventEmitter, arbitraryEventName,
+      (emitter, eventName) => {
+        try {
+          emitter.should.emit(eventName);
+          return false;
+        } catch (err) {
+          return true;
+        }
+      }
+    );
+
+    jsc.property(
       "listens for immediately emitted events",
       anyEmitter, arbitraryEventName, arbitraryEventData,
       (emitter, eventName, eventData) => {
@@ -109,17 +127,6 @@ describe("x.should", function() {
         const p = emitter.should.emit(eventName);
         emitter.emit(eventName, eventData);
         return p.then(() => true);
-      }
-    );
-
-    jsc.property(
-      "fails if event isn't sent",
-      anyEmitter, arbitraryEventName,
-      (emitter, eventName) => {
-        (function() {
-          emitter().should.emit(eventName);
-        }).should.fail;
-        return true;
       }
     );
 
