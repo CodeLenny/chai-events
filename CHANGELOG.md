@@ -1,5 +1,7 @@
 ## Unreleased
 
+## [0.0.3] - 2019-01-15
+
 Bugfixes and custom timeouts.
 
 ### Added
