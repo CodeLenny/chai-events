@@ -1,5 +1,7 @@
 # Chai Events
 
+[![BrowserStack Status](https://www.browserstack.com/automate/badge.svg?badge_key=dHZBczZFaDMraUtrcnNNSTZzVHpRN056ZzU1VHZoclI2S3R6OFRkRGpBYz0tLWcwWndCVUFlTW1jQTlLWjBqc0ZwdVE9PQ==--9ca2d6648ca4fcb5a1bb63e255daf0c6dc46d18c)](https://www.browserstack.com/automate/public-build/dHZBczZFaDMraUtrcnNNSTZzVHpRN056ZzU1VHZoclI2S3R6OFRkRGpBYz0tLWcwWndCVUFlTW1jQTlLWjBqc0ZwdVE9PQ==--9ca2d6648ca4fcb5a1bb63e255daf0c6dc46d18c)
+
 Make assertions about event emitters.
 
 ```js
@@ -35,3 +37,8 @@ describe("Event Emitting", function() {
 
 });
 ```
+
+## Browser Usage
+
+*Browser testing powered by BrowserStack*  
+[![BrowserStack](/docs/img/browserstack-logo-600x315.png)](https://www.browserstack.com)
